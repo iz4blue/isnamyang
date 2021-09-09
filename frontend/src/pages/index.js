@@ -4,6 +4,7 @@ import {Helmet} from 'react-helmet'
 import {BrowserBarcodeReader} from '@zxing/library'
 import DecodeHintType from '@zxing/library/esm5/core/DecodeHintType'
 import activeConfetti from '../lib/confetti.js'
+import { setWebAppManifest } from '../lib/dynamicMenifest';
 
 
 const confettiColors = [
@@ -108,6 +109,13 @@ class Index extends React.Component {
     }
 
     async componentDidMount() {
+        setTimeout(() => {
+            setWebAppManifest({
+                userAgent: navigator.userAgent,
+                selector: '#dynamic-manifest'
+            })
+        }, 1)
+
         try {
             await this.startDetect()
         } catch (error) {
@@ -123,7 +131,26 @@ class Index extends React.Component {
         return (
             <div className="app">
                 <Helmet>
+                    <title>남양유없</title>
+                    <meta charSet="utf-8" />
+                    <meta httpEquiv="x-ua-compatible" content="ie=edge" />
                     <meta name="viewport" content="width=device-width, initial-scale=1"/>
+                    <meta name="description" content="(베타)남양 브랜드 로고가 보이지 않는 제품이 남양의 손길이 닿은 제품인지 알아볼 수 있도록 도와줍니다. https://github.com/NullFull/isnamyang/issues 에서 프로젝트에 기여할 수 있습니다." />
+                    <meta property="og:url" content="https://isnamyang.nullfull.kr" />
+                    <meta property="og:type" content="website" />
+                    <meta property="og:title" content="남양유없 | 널채움(nullfull)" />
+                    <meta property="og:description" content="바코드만 찍으면 남양의 손길이 닿은 제품인지 알 수 있는 남양유없입니다! " />
+                    <meta property="og:image" content="https://isnamyang.nullfull.kr/isnamyang-logo.png" />
+                    <meta property="og:locale" content="ko_KR" />
+                    <link rel="manifest" id="dynamic-manifest" />
+                    <link rel="apple-touch-icon" sizes="72x72" href="/icons/icon-72x72-white.png" />
+                    <link rel="apple-touch-icon" sizes="96x96" href="/icons/icon-96x96-white.png" />
+                    <link rel="apple-touch-icon" sizes="128x128" href="/icons/icon-128x128-white.png" />
+                    <link rel="apple-touch-icon" sizes="144x144" href="/icons/icon-144x144-white.png" />
+                    <link rel="apple-touch-icon" sizes="152x152" href="/icons/icon-152x152-white.png" />
+                    <link rel="apple-touch-icon" sizes="192x192" href="/icons/icon-192x192-white.png" />
+                    <link rel="apple-touch-icon" sizes="384x384" href="/icons/icon-384x384-white.png" />
+                    <link rel="apple-touch-icon" sizes="512x512" href="/icons/icon-512x512-white.png" />
                 </Helmet>
                 <header className="header">
                     <span className="logo">
@@ -139,9 +166,9 @@ class Index extends React.Component {
                         {streamNotSupported ?
                           <form onSubmit={this.handleSubmit}>
                               <label htmlFor="barcode">바코드
-                                  <input id="barcode" type="tel" pattern="[0-9]*" maxLength="13" value={this.state.entered} onChange={this.handleChange.bind(this)} placeholder="8801069173603"/>
+                                  <input id="barcode" type="text" pattern="[0-9]*" maxLength="13" value={this.state.entered} onChange={this.handleChange.bind(this)} placeholder="8801069173603"/>
                               </label>
-                              <button type="submit" className="submit-btn">찾기</button>
+                              <button type="submit" className="submit-btn" disabled={this.state.entered.length < 13}>찾기</button>
                           </form> :
                           <div className="reader">
                               <p>아래 화면에 바코드가 나오도록 비춰주세요</p>
@@ -174,7 +201,7 @@ class Index extends React.Component {
                         }
                         <div className="actions">
                             <button className="reset" type="button" onClick={this.reset}>다른 제품 찾기</button>
-                            <a className="report" href={this.getReportUrl(isNamyang, detected)}>오류 신고</a>
+                            <a className="report" href={this.getReportUrl(isNamyang, detected)} target="_blank">오류 신고</a>
                         </div>
                     </section>
                 }
